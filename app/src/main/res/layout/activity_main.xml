@@ -36,13 +36,12 @@
         android:id="@+id/btnDownload"
         android:layout_width="123dp"
         android:layout_height="45dp"
-        android:layout_marginStart="288dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="15dp"
         android:text="ダウンロード"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textTitle"
         app:layout_constraintTop_toBottomOf="@+id/editId" />
 
     <WebView
@@ -60,14 +59,12 @@
         app:layout_constraintTop_toBottomOf="@+id/btnDownload"
         app:layout_constraintVertical_bias="0.0" />
 
-    <EditText
-        android:id="@+id/editTitle"
-        android:layout_width="250dp"
-        android:layout_height="44dp"
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="249dp"
+        android:layout_height="16dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="6dp"
-        android:ems="10"
-        android:inputType="textPersonName"
+        android:layout_marginTop="22dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editId" />
 

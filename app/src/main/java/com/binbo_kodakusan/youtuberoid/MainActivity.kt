@@ -12,6 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.kiulian.downloader.YoutubeDownloader
@@ -32,8 +33,8 @@ class MainActivity : AppCompatActivity() {
                 val webView = findViewById<WebView>(R.id.webView)
                 webView.loadUrl("https://www.youtube.com/watch?v=" + videoIds[0])
             }
-            val editTitle = findViewById<EditText>(R.id.editTitle)
-            editTitle.text = "ダウンロード開始します".toEditable()
+            val textTitle = findViewById<TextView>(R.id.textTitle)
+            textTitle.text = "ダウンロード開始します".toEditable()
             // ビデオダウンロード
             DownloadTask(this).execute(*videoIds)
         }
@@ -177,9 +178,9 @@ class DownloadTask(val activity: Activity) : AsyncTask<String, String, String>()
     override fun onPostExecute(result: String) {
         Log.d(this.toString(), "DownloadTask.onPostExecute: " + result)
         if (result != "") {
-            val editTitle = activity.findViewById<EditText>(R.id.editTitle)
-            editTitle?.let {
-                editTitle.text = result.toEditable()
+            val textTitle = activity.findViewById<TextView>(R.id.textTitle)
+            textTitle?.let {
+                textTitle.text = result.toEditable()
             }
         }
     }
@@ -211,8 +212,8 @@ class GetTitleTask(val activity: Activity) : AsyncTask<String, String, String>()
     override fun onPostExecute(result: String) {
         Log.d(this.toString(), "GetTitleTask.onPostExecute: " + result)
         if (result != "") {
-            val editTitle = activity.findViewById<EditText>(R.id.editTitle)
-            editTitle?.text = result.toEditable()
+            val textTitle = activity.findViewById<TextView>(R.id.textTitle)
+            textTitle?.text = result.toEditable()
         }
     }
 }
