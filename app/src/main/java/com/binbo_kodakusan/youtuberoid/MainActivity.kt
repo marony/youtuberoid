@@ -22,6 +22,7 @@ fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(t
 
 class MainActivity : AppCompatActivity() {
 
+    // コントロールのセットアップ
     private fun setupControls() {
         // ボタンの処理
         // ダウンロードボタン
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // YouTube表示用WebViewのセットアップ
     private fun setupWebViewForYouTube() {
         val that  = this
         // WebViewの処理
@@ -68,25 +70,21 @@ class MainActivity : AppCompatActivity() {
         settings.setPluginState(WebSettings.PluginState.ON)
     }
 
-    // アクティビティ作成時に呼ばれる
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        setupControls()
-        setupWebViewForYouTube()
-
+    // アプリケーションの状態を復元
+    private fun restoreStateFromBundle(savedInstanceState: Bundle?) {
         // 状態を復元する(インテントの処理より先にやること)
-        savedInstanceState?.let {
+        IntentUtil.getStateFromBundle(savedInstanceState)?.let {
             val editText = findViewById<EditText>(R.id.editId)
             if (editText != null) {
-                val videoIds = it.getString("videoIds", "")
-                val toast = Toast.makeText(this, "状態復元: " + videoIds, Toast.LENGTH_SHORT)
+                val toast = Toast.makeText(this, "状態復元: " + it, Toast.LENGTH_SHORT)
                 toast.show()
-                editText.text = videoIds.toEditable()
+                editText.text = it.videoIds.toEditable()
             }
         }
+    }
 
+    // 他のアプリケーションから送られたインテントを処理
+    private fun setStateFromOtherApplication() {
         val that = this
         // インテントの処理
         intent?.let {
@@ -110,16 +108,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    // アプリケーションの状態を保存
+    private fun saveStateToBundle(outState: Bundle) {
         // 状態を保存する
         val editText = findViewById<EditText>(R.id.editId)
         val videoIds = editText.text.toString()
         val toast = Toast.makeText(this, "状態保存: " + videoIds, Toast.LENGTH_SHORT)
         toast.show()
-        outState.putString("videoIds", videoIds)
+        IntentUtil.setStateToBundle(InstanceState(videoIds), outState)
     }
 
+    // アクティビティ作成時に呼ばれる
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        setupControls()
+        setupWebViewForYouTube()
+        restoreStateFromBundle(savedInstanceState)
+        setStateFromOtherApplication()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        saveStateToBundle(outState)
+    }
+
+    // URL(かvideoIdそのもの)からvideoIdを取得
     private fun getVideoIds(s: String): Array<String> {
         Log.d(this.toString(), "getVideoIds: " + s)
         if (s.startsWith("http")) {
