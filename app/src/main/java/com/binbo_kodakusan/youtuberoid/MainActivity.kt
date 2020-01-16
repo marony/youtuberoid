@@ -1,8 +1,6 @@
 package com.binbo_kodakusan.youtuberoid
 
-import android.app.Activity
-import android.content.Intent.ACTION_SEND
-import android.os.AsyncTask
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -15,7 +13,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.github.kiulian.downloader.YoutubeDownloader
 
 // EditTextにEditableを設定するために拡張メソッドで文字列から変換
 fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
@@ -35,6 +32,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             with(findViewById<TextView>(R.id.textTitle)) {
+                val toast = Toast.makeText(this@MainActivity, "ダウンロードします: " + text, Toast.LENGTH_SHORT)
+                toast.show()
                 text = "ダウンロード開始します".toEditable()
             }
             // ビデオダウンロード
@@ -76,8 +75,6 @@ class MainActivity : AppCompatActivity() {
         // 状態を復元する(インテントの処理より先にやること)
         IntentUtil.getStateFromBundle(savedInstanceState)?.also { state ->
             with(findViewById<EditText>(R.id.editId)) {
-                val toast = Toast.makeText(this@MainActivity, "状態復元: $state", Toast.LENGTH_SHORT)
-                toast.show()
                 text = state.videoIds.toEditable()
             }
         }
@@ -88,13 +85,11 @@ class MainActivity : AppCompatActivity() {
         // インテントの処理
         intent?.also { intent ->
             Log.d(this.toString(), "onCreate: $intent")
-            if (intent.action == ACTION_SEND && intent.type == "text/plain") {
+            if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
                 // ブラウザからの共有で呼ばれた時の処理
                 // intent: Intent { act=android.intent.action.SEND typ=text/plain flg=0x10480001 cmp=com.binbo_kodakusan.youtuberoid/.MainActivity clip={text/plain T:https://youtu.be/_VH91mivTUw} (has extras) }
                 intent.clipData?.getItemAt(0)?.text?.toString()?.also { uri ->
                     with(findViewById<EditText>(R.id.editId)) {
-                        val toast = Toast.makeText(this@MainActivity, "Intentから入力: $uri", Toast.LENGTH_SHORT)
-                        toast.show()
                         text = uri.toEditable()
                         // タイトル取得
                         val videoIds = getVideoIds(uri)
@@ -110,8 +105,6 @@ class MainActivity : AppCompatActivity() {
         // 状態を保存する
         with(findViewById<EditText>(R.id.editId)) {
             val videoIds = text.toString()
-            val toast = Toast.makeText(this@MainActivity, "状態保存: " + videoIds, Toast.LENGTH_SHORT)
-            toast.show()
             IntentUtil.setStateToBundle(InstanceState(videoIds), outState)
         }
     }
